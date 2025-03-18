@@ -1,6 +1,23 @@
+import { useState } from "react";
 import "./App.css";
 
 function App() {
+  const [message, setMessage] = useState("");
+
+  const tamir1 = () => {
+    fetch("http://localhost:3000/tamir1/")
+      .then((response) => response.text())
+      .then((data) => setMessage(data))
+      .catch((error) => console.error("Error fetching message:", error));
+  };
+
+  const tamir2 = () => {
+    fetch("http://localhost:3000/tamir2/")
+      .then((response) => response.text())
+      .then((data) => setMessage(data))
+      .catch((error) => console.error("Error fetching message:", error));
+  };
+
   return (
     <div className="container">
       <header>
@@ -11,10 +28,12 @@ function App() {
 
       <div className="card">
         <div className="button-group">
-          <button className="task-button">Tamir1: List API (40 points)</button>
-          <button className="task-button">Tamir2: Complex Query (60 points)</button>
+          <button className="task-button" onClick={tamir1}>Tamir1: List API (40 points)</button>
+          <button className="task-button" onClick={tamir2}>Tamir2: Complex Query (60 points)</button>
         </div>
       </div>
+
+      {message && <p className="response">{message}</p>}
     </div>
   );
 }
