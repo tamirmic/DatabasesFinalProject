@@ -1,3 +1,4 @@
+//go to src folder and run the following command to start the server
 //node --watch-path=. Server.js 
 
 const express = require("express");

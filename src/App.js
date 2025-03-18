@@ -1,3 +1,5 @@
+//run npm start
+
 import { useState } from "react";
 import "./App.css";
 
