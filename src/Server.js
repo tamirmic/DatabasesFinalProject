@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
 app.get("/tamir1/", async (req, res) => {
     try {
         console.log('Server.tamir1() -> running...')
-        const rows = await tamir1();
+        const rows = await tamir1('Electronics');
         // Send the rows as JSON response to the client
         res.json({ message: "Server.tamir1() -> executing API!", data: rows });
     }   catch (error) {

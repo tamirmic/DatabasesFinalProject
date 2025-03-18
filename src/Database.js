@@ -33,11 +33,20 @@ async function runQuery(query) {
     }
 }
 
-async function tamir1() {
-    console.log('Database.tamir1()');
-    const query = 'SELECT * FROM product';
+async function tamir1(category) {
+    console.log(`Database.tamir1() -> Fetching products in category: ${category}`);
+
+    const query = `
+        SELECT ProductSKU, ProductName, Price, InventoryLevel
+        FROM Product
+        WHERE Category = '${category}'
+        ORDER BY ProductName
+        LIMIT 10 OFFSET 0;
+    `;
+
     return runQuery(query);
 }
+
 
 async function tamir2() {
     console.log('Database.tamir2()');
