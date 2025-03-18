@@ -5,7 +5,7 @@ function App() {
     <div className="container">
       <header>
         <h1>CSS 475 Final Project</h1>
-        <h2>Team: Team 1</h2>
+        <h2>Team name: Team 1</h2>
         <h3>Members: Julia Nguyen, Jason Xu, Joel Yim, Tamir Michaely</h3>
       </header>
 
