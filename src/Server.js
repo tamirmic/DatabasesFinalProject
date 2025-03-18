@@ -20,12 +20,13 @@ app.get("/tamir1/", async (req, res) => {
     try {
         console.log('Tamir 1 running...')
         res.send("Executing 1nd API!");
-        await tamir1();
-        //const result = await main(queryStr);
-        //res.json(result);
+        const rows = await tamir1();
+        // Send the rows as JSON response to the client
+        //res.json({ message: "Executing tamir1 API!", data: rows });
     }   catch (error) {
-        console.log('Tamir 1 failed...')
-        res.status(500).send("Error executing 1st API!");
+        const errMessage = "Error executing tamir1 API!" + error;
+        console.log(errMessage)
+        res.status(500).send(errMessage);
     }
 });
   

@@ -19,25 +19,21 @@ const pool = new pg.Pool(config);
 
 
 async function tamir1() {
-    console.log('demo()');
-
-    
+    console.log('tamir1()');
     // Use a try-catch block to handle async errors
     try {
         // Connect to the database
         const client = await pool.connect();
-        
         // Perform the query using async/await
         const result = await client.query('SELECT * FROM Book LIMIT 10');
-        
-        // Log the result
-        console.log(result.rows);
-        
         // Release the client after the query is finished
         client.release();
-    } catch (err) {
+        // Log the result
+        console.log(result.rows);
+        return result.rows;
+    } catch (error) {
         // Catch and log any errors that occur
-        console.error('Error executing query', err.stack);
+        console.error('tamir1() Error executing query', error.stack);
     }
 }
 
