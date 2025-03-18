@@ -3,7 +3,6 @@
 
 const express = require("express");
 const cors = require("cors");
-const { main } = require("./Database");
 const { tamir1 } = require("./Database");
 
 
@@ -19,10 +18,10 @@ app.get("/", (req, res) => {
 app.get("/tamir1/", async (req, res) => {
     try {
         console.log('Tamir 1 running...')
-        res.send("Executing 1nd API!");
+        //res.send("Executing 1nd API!");
         const rows = await tamir1();
         // Send the rows as JSON response to the client
-        //res.json({ message: "Executing tamir1 API!", data: rows });
+        res.json({ message: "Executing tamir1 API!", data: rows });
     }   catch (error) {
         const errMessage = "Error executing tamir1 API!" + error;
         console.log(errMessage)
