@@ -1,0 +1,135 @@
+\encoding utf8
+
+\c postgres
+drop database dbUnifiedInventoryManager;
+create database dbUnifiedInventoryManager;
+\c dbUnifiedInventoryManager
+
+\encoding utf8
+
+
+-- Create the roles table for user roles
+CREATE TABLE Role (
+    RoleKey VARCHAR(50) PRIMARY KEY,
+    RoleName VARCHAR(100) NOT NULL
+);
+
+-- Create the Products table
+CREATE TABLE Product (
+    ProductSKU VARCHAR(50) PRIMARY KEY,
+    ProductName VARCHAR(255) NOT NULL,
+    ProductDescription TEXT,
+    Price DECIMAL(10,2) NOT NULL,
+    RestockLevel INT,
+    Category VARCHAR(100),
+    InventoryLevel INT NOT NULL
+);
+
+-- Create the Sales Order table
+CREATE TABLE SalesOrder (
+    OrderNumber VARCHAR(50) PRIMARY KEY,
+    OrderDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PlatformKey VARCHAR(255),
+    CustomerEmail VARCHAR(100),
+    TotalAmount DECIMAL(10,2)
+);
+
+-- Create the SaleItem table for recording sales items
+CREATE TABLE SaleItem (
+    SaleItemID VARCHAR(50) PRIMARY KEY,
+    OrderNumber VARCHAR(50) REFERENCES SalesOrder(OrderNumber),
+    ProductSKU VARCHAR(50) REFERENCES Product(ProductSKU),
+    UnitsSold INT,
+    SalePrice DECIMAL(10,2),
+    DiscountApplied DECIMAL(5,2),
+    SaleDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create the Inventory History table to track inventory changes
+CREATE TABLE InventoryHistory (
+    InventoryChangeID SERIAL PRIMARY KEY,
+    ProductSKU VARCHAR(50) REFERENCES Product(ProductSKU),
+    ChangeType VARCHAR(50) CHECK (ChangeType IN ('increase', 'decrease', 'adjustment')),
+    QuantityChanged INT,
+    ChangeDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UserEmail VARCHAR(100),
+    Description TEXT
+);
+
+-- Create the Return table for managing customer returns
+CREATE TABLE Return (
+    ReturnID SERIAL PRIMARY KEY,
+    SaleItemID VARCHAR(50) REFERENCES SaleItem(SaleItemID),
+    ReturnDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Reason TEXT,
+    RefundAmount DECIMAL(10,2),
+    RestockQuantity INT,
+    UpdatedInventoryLevel INT
+);
+
+-- Create the Promotion table for managing product promotions
+CREATE TABLE Promotion (
+    PromotionID SERIAL PRIMARY KEY,
+    ProductSKU VARCHAR(50) REFERENCES Product(ProductSKU),
+    DiscountPercentage DECIMAL(5,2),
+    StartDate DATE,
+    EndDate DATE,
+    Conditions JSONB -- For storing additional promotion conditions as JSON
+);
+
+-- Create the Users table for system users
+CREATE TABLE Users (
+    Username VARCHAR(50) PRIMARY KEY,
+    Password VARCHAR(255) NOT NULL,
+    RoleKey VARCHAR(50) REFERENCES Role(RoleKey),
+    UserEmail VARCHAR(100) UNIQUE NOT NULL
+);
+
+-- Create the UserPermissions table for managing user permissions
+CREATE TABLE UserPermissions (
+    UserEmail VARCHAR(100) REFERENCES Users(UserEmail),
+    Permission VARCHAR(50) NOT NULL,
+    PRIMARY KEY (UserEmail, Permission)
+);
+
+-- Create the AuditLogs table for logging user actions
+CREATE TABLE AuditLog (
+    LogID SERIAL PRIMARY KEY,
+    UserEmail VARCHAR(100) REFERENCES Users(UserEmail),
+    ActionType VARCHAR(50) CHECK (ActionType IN ('INSERT', 'UPDATE', 'DELETE')),
+    TableName VARCHAR(100),
+    RecordKey VARCHAR(255),
+    Description TEXT,
+    IPAddress VARCHAR(50),
+    UserAgent VARCHAR(255),
+    ActionDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create the Sales Report table to store report data (this can be used for different report types)
+CREATE TABLE SalesReport (
+    ReportID SERIAL PRIMARY KEY,
+    ReportType VARCHAR(50) CHECK (ReportType IN ('sales', 'inventory', 'returns')),
+    StartDate DATE,
+    EndDate DATE,
+    ReportData JSONB
+);
+
+-- Create the SyncInventory table for syncing external platform data
+CREATE TABLE SyncInventory (
+    SyncID SERIAL PRIMARY KEY,
+    ProductSKU VARCHAR(50) REFERENCES Product(ProductSKU),
+    PlatformKey VARCHAR(255),
+    InventoryLevel INT,
+    SyncDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create a table to store details for promotional discounts on sales
+CREATE TABLE SalePromotion (
+    SaleItemID VARCHAR(50) REFERENCES SaleItem(SaleItemID),
+    PromotionID SERIAL REFERENCES Promotion(PromotionID),
+    DiscountApplied DECIMAL(5,2),
+    PRIMARY KEY (SaleItemID, PromotionID)
+);
+
+\c postgres
+\c dbUnifiedInventoryManager

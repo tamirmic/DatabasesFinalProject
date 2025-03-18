@@ -1,0 +1,102 @@
+-- Start transaction
+BEGIN;
+
+-- Delete existing data
+DELETE FROM SalePromotion;
+DELETE FROM SyncInventory;
+DELETE FROM SalesReport;
+DELETE FROM AuditLog;
+DELETE FROM UserPermissions;
+DELETE FROM Return;
+DELETE FROM Promotion;
+DELETE FROM InventoryHistory;
+DELETE FROM SaleItem;
+DELETE FROM SalesOrder;
+DELETE FROM Product;
+DELETE FROM Users;
+DELETE FROM Role;
+
+-- Insert Roles
+INSERT INTO Role (RoleKey, RoleName) VALUES
+    ('admin', 'Administrator'),
+    ('manager', 'Manager'),
+    ('employee', 'Employee');
+
+-- Insert Users
+INSERT INTO Users (Username, Password, RoleKey, UserEmail) VALUES
+    ('admin1', 'hashed_password1', 'admin', 'admin@example.com'),
+    ('manager1', 'hashed_password2', 'manager', 'manager@example.com'),
+    ('employee1', 'hashed_password3', 'employee', 'employee@example.com'),
+    ('employee2', 'hashed_password4', 'employee', 'employee2@example.com');
+
+-- Insert Products
+INSERT INTO Product (ProductSKU, ProductName, ProductDescription, Price, RestockLevel, Category, InventoryLevel) VALUES
+    ('SKU001', 'Laptop', 'Gaming Laptop', 1200.99, 5, 'Electronics', 10),
+    ('SKU002', 'Smartphone', 'Latest model', 799.49, 10, 'Electronics', 25),
+    ('SKU003', 'Desk Chair', 'Ergonomic office chair', 149.99, 8, 'Furniture', 15),
+    ('SKU004', 'Monitor', '4K UHD Monitor', 299.99, 6, 'Electronics', 20),
+    ('SKU005', 'Keyboard', 'Mechanical Keyboard', 99.99, 12, 'Accessories', 30);
+
+-- Insert Sales Orders
+INSERT INTO SalesOrder (OrderNumber, OrderDate, PlatformKey, CustomerEmail, TotalAmount) VALUES
+    ('ORD001', NOW(), 'Amazon', 'customer1@example.com', 1200.99),
+    ('ORD002', NOW(), 'eBay', 'customer2@example.com', 799.49),
+    ('ORD003', NOW(), 'Amazon', 'customer3@example.com', 149.99),
+    ('ORD004', NOW(), 'BestBuy', 'customer4@example.com', 299.99),
+    ('ORD005', NOW(), 'Walmart', 'customer5@example.com', 99.99);
+
+-- Insert Sale Items
+INSERT INTO SaleItem (SaleItemID, OrderNumber, ProductSKU, UnitsSold, SalePrice, DiscountApplied, SaleDate) VALUES
+    ('SI001', 'ORD001', 'SKU001', 1, 1200.99, 0.00, NOW()),
+    ('SI002', 'ORD002', 'SKU002', 1, 799.49, 0.00, NOW()),
+    ('SI003', 'ORD003', 'SKU003', 1, 149.99, 5.00, NOW()),
+    ('SI004', 'ORD004', 'SKU004', 2, 299.99, 10.00, NOW()),
+    ('SI005', 'ORD005', 'SKU005', 3, 99.99, 2.00, NOW());
+
+-- Insert Inventory History
+INSERT INTO InventoryHistory (ProductSKU, ChangeType, QuantityChanged, UserEmail, Description) VALUES
+    ('SKU001', 'decrease', 1, 'admin@example.com', 'Sold 1 unit'),
+    ('SKU002', 'decrease', 1, 'manager@example.com', 'Sold 1 unit'),
+    ('SKU003', 'increase', 2, 'employee@example.com', 'Restocked 2 units'),
+    ('SKU004', 'adjustment', 1, 'admin@example.com', 'Manual stock adjustment'),
+    ('SKU005', 'decrease', 3, 'manager@example.com', 'Bulk order sale');
+
+-- Insert Promotions
+INSERT INTO Promotion (ProductSKU, DiscountPercentage, StartDate, EndDate, Conditions) VALUES
+    ('SKU001', 10.00, '2025-03-01', '2025-03-10', '{"minPurchase": 1}'),
+    ('SKU002', 15.00, '2025-04-01', '2025-04-15', '{"minPurchase": 1}'),
+    ('SKU003', 5.00, '2025-05-01', '2025-05-10', '{"minPurchase": 2}'),
+    ('SKU004', 7.00, '2025-06-01', '2025-06-15', '{"minPurchase": 1}'),
+    ('SKU005', 12.00, '2025-07-01', '2025-07-20', '{"minPurchase": 3}');
+
+-- Insert Returns
+INSERT INTO Return (SaleItemID, ReturnDate, Reason, RefundAmount, RestockQuantity, UpdatedInventoryLevel) VALUES
+    ('SI001', NOW(), 'Defective product', 1200.99, 1, 11),
+    ('SI002', NOW(), 'Wrong item shipped', 799.49, 1, 26),
+    ('SI003', NOW(), 'Customer changed mind', 149.99, 1, 16);
+
+-- Insert User Permissions
+INSERT INTO UserPermissions (UserEmail, Permission) VALUES
+    ('admin@example.com', 'FULL_ACCESS'),
+    ('manager@example.com', 'MANAGE_INVENTORY'),
+    ('employee@example.com', 'VIEW_REPORTS'),
+    ('employee2@example.com', 'EDIT_ORDERS');
+
+-- Insert Audit Logs
+INSERT INTO AuditLog (UserEmail, ActionType, TableName, RecordKey, Description, IPAddress, UserAgent) VALUES
+    ('admin@example.com', 'INSERT', 'Product', 'SKU001', 'Added new product', '192.168.1.1', 'Mozilla/5.0'),
+    ('manager@example.com', 'UPDATE', 'InventoryHistory', 'IH001', 'Adjusted stock levels', '192.168.1.2', 'Chrome/90.0');
+
+-- Insert Sales Report
+INSERT INTO SalesReport (ReportType, StartDate, EndDate, ReportData) VALUES
+    ('sales', '2025-03-01', '2025-03-10', '{"totalSales": 5, "revenue": 5000}');
+
+-- Insert Sync Inventory
+INSERT INTO SyncInventory (ProductSKU, PlatformKey, InventoryLevel, SyncDate) VALUES
+    ('SKU001', 'Amazon', 9, NOW()),
+    ('SKU002', 'eBay', 24, NOW()),
+    ('SKU003', 'BestBuy', 14, NOW()),
+    ('SKU004', 'Walmart', 19, NOW()),
+    ('SKU005', 'Newegg', 29, NOW());
+
+COMMIT;
