@@ -14,15 +14,14 @@ var config = {
 // Create the pool and connect to the database
 const pool = new pg.Pool(config);
 
-
-async function tamir1() {
-    console.log('Database.Tamir1()');
+async function runQuery(query) {
+    console.log('Database.runQuery()');
     // Use a try-catch block to handle async errors
     try {
         // Connect to the database
         const client = await pool.connect();
         // Perform the query using async/await
-        const result = await client.query('SELECT * FROM Book LIMIT 10');
+        const result = await client.query(query);
         // Release the client after the query is finished
         client.release();
         // Log the result
@@ -30,50 +29,22 @@ async function tamir1() {
         return result.rows;
     } catch (error) {
         // Catch and log any errors that occur
-        console.error('Database.Tamir1() -> Error executing query', error.stack);
+        console.error('Database.runQuery() -> Error executing query', error.stack);
     }
+}
+
+async function tamir1() {
+    console.log('Database.tamir1()');
+    const query = 'SELECT * FROM Book LIMIT 10';
+    return runQuery(query);
+}
+
+async function tamir2() {
+    console.log('Database.tamir2()');
+    const query = 'SELECT * FROM Book LIMIT 20';
+    return runQuery(query);
 }
 
 
 
-
-
-
-
-
-
-async function query (q) {
-    console.log('query() ' + q)
-
-    const client = await pool.connect()
-    console.log('connect()')
-
-    let res
-    try {
-        await client.query('BEGIN')
-        try {
-            res = await client.query(q)
-            await client.query('COMMIT')
-        } catch (err) {
-            await client.query('ROLLBACK')
-            throw err
-        }
-    } finally {
-        client.release()
-    }
-    return res.rows;
-}
-
-async function main (queryStr) {
-    try {
-        const { rows } = await query(queryStr);
-        return rows;
-    } catch (err) {
-        console.log('Database ' + err)
-        return null;
-    }
-}
-//main('SELECT * FROM user where user = \'123\'')
-//main('SELECT * FROM Book LIMIT 10')
-
-module.exports = { tamir1, main };
+module.exports = { tamir1, tamir2 };
