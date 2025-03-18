@@ -50,4 +50,4 @@ async function main (queryStr) {
 //main('SELECT * FROM user where user = \'123\'')
 //main('SELECT * FROM Book LIMIT 10')
 
-//module.exports = { main };
+module.exports = { main };
