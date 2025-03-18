@@ -33,8 +33,8 @@ async function runQuery(query) {
     }
 }
 
-async function tamir1(category) {
-    console.log(`Database.tamir1() -> Fetching products in category: ${category}`);
+async function retrieveProductsByCategory(category) {
+    console.log(`Database.retrieveProductsByCategory() -> Fetching products in category: ${category}`);
 
     const query = `
         SELECT ProductSKU, ProductName, Price, InventoryLevel
@@ -56,4 +56,4 @@ async function tamir2() {
 
 
 
-module.exports = { tamir1, tamir2 };
+module.exports = { retrieveProductsByCategory, tamir2 };

@@ -3,7 +3,7 @@
 
 const express = require("express");
 const cors = require("cors");
-const { tamir1, tamir2 } = require("./Database");
+const { retrieveProductsByCategory, tamir2 } = require("./Database");
 
 
 const app = express();
@@ -20,14 +20,14 @@ app.get("/", (req, res) => {
 });
 
 
-app.get("/tamir1/", async (req, res) => {
+app.get("/retrieveProductsByCategory/", async (req, res) => {
     try {
-        console.log('Server.tamir1() -> running...')
-        const rows = await tamir1('Electronics');
+        console.log('Server.retrieveProductsByCategory() -> running...')
+        const rows = await retrieveProductsByCategory('Electronics');
         // Send the rows as JSON response to the client
-        res.json({ message: "Server.tamir1() -> executing API!", data: rows });
+        res.json({ message: "Server.retrieveProductsByCategory() -> executing API!", data: rows });
     }   catch (error) {
-        const errMessage = "Server.tamir1() -> Error executing API!" + error;
+        const errMessage = "Server.retrieveProductsByCategory() -> Error executing API!" + error;
         console.log(errMessage)
         res.status(500).send(errMessage);
     }

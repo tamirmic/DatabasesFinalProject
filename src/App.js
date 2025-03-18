@@ -6,8 +6,8 @@ import "./App.css";
 function App() {
   const [message, setMessage] = useState("");
 
-  const tamir1 = () => {
-    fetch("http://localhost:3000/tamir1/")
+  const retrieveProductsByCategory = () => {
+    fetch("http://localhost:3000/retrieveProductsByCategory/")
       .then((response) => response.json())  // Use .json() instead of .text() to parse the JSON response
       .then((data) => setMessage(JSON.stringify(data, null, 2)))  // Log data in a readable format
       .catch((error) => console.error("Error fetching message:", error));
@@ -34,7 +34,7 @@ function App() {
 
       <div className="card">
         <div className="button-group">
-          <button className="task-button" onClick={tamir1}>Tamir1: List API (40 points)</button>
+          <button className="task-button" onClick={retrieveProductsByCategory}>Retrieve Products By Category: (List API)</button>
           <button className="task-button" onClick={tamir2}>Tamir2: Complex Query (60 points)</button>
         </div>
       </div>
