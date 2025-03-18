@@ -1,9 +1,6 @@
 const pg = require('pg')
 
-// create a config to configure both pooling behavior
-// and client options
-// note: all config is optional and the environment variables
-// will be read if the config is not present
+// create a config to configure both pooling behavior and client options
 var config = {
     user: 'postgres', // env var: PGUSER
     database: 'db03', // env var: PGDATABASE
@@ -19,7 +16,7 @@ const pool = new pg.Pool(config);
 
 
 async function tamir1() {
-    console.log('tamir1()');
+    console.log('Database.Tamir1()');
     // Use a try-catch block to handle async errors
     try {
         // Connect to the database
@@ -33,19 +30,15 @@ async function tamir1() {
         return result.rows;
     } catch (error) {
         // Catch and log any errors that occur
-        console.error('tamir1() Error executing query', error.stack);
+        console.error('Database.Tamir1() -> Error executing query', error.stack);
     }
 }
 
 
-/*
-function demo () {
-    console.log('demo()');
-    const pool = new pg.Pool(config);
-    const client = pool.connect();
-    client.query('SELECT * FROM Book LIMIT 10');
-    //client.release();
-}*/
+
+
+
+
 
 
 
