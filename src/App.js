@@ -8,8 +8,8 @@ function App() {
 
   const tamir1 = () => {
     fetch("http://localhost:3000/tamir1/")
-      .then((response) => response.text())
-      .then((data) => setMessage(data))
+      .then((response) => response.json())  // Use .json() instead of .text() to parse the JSON response
+      .then((data) => setMessage(JSON.stringify(data, null, 2)))  // Log data in a readable format
       .catch((error) => console.error("Error fetching message:", error));
   };
 

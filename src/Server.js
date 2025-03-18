@@ -27,7 +27,8 @@ app.get("/tamir1/", async (req, res) => {
         console.log('Tamir 1 failed...')
         res.status(500).send("Error executing 1st API!");
     }
-  });
+});
+  
 
 app.get("/tamir2/", (req, res) => {
     res.send("Executing 2nd API!");
