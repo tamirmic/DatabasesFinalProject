@@ -8,26 +8,30 @@ function App() {
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
+      <h1>CSS 475 Final Project</h1>
+      <h2>Team: Team 1</h2>
+      <h2>Members: Julia Nguyen, Jason Xu, Joel Yim, Tamir Michaely</h2>
+
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+        <div>
+          <button onClick={() => setCount((count) => count + 1)}>
+            Tamir1: List API (40 points)
+          {count}
+          </button>
+        </div>
+        <div>
+
+        </div>
+        <div>
+          <button onClick={() => setCount((count) => count + 1)}>
+            Tamir2: Complex Query (60 points)
+          {count}
+          </button>
+        </div>
+        <div>
+          
+        </div>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
