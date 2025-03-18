@@ -14,7 +14,44 @@ var config = {
     idleTimeoutMillis: 30000 // how long a client is allowed to remain idle before being closed
 }
 
-const pool = new pg.Pool(config)
+// Create the pool and connect to the database
+const pool = new pg.Pool(config);
+
+
+async function tamir1() {
+    console.log('demo()');
+
+    
+    // Use a try-catch block to handle async errors
+    try {
+        // Connect to the database
+        const client = await pool.connect();
+        
+        // Perform the query using async/await
+        const result = await client.query('SELECT * FROM Book LIMIT 10');
+        
+        // Log the result
+        console.log(result.rows);
+        
+        // Release the client after the query is finished
+        client.release();
+    } catch (err) {
+        // Catch and log any errors that occur
+        console.error('Error executing query', err.stack);
+    }
+}
+
+
+/*
+function demo () {
+    console.log('demo()');
+    const pool = new pg.Pool(config);
+    const client = pool.connect();
+    client.query('SELECT * FROM Book LIMIT 10');
+    //client.release();
+}*/
+
+
 
 async function query (q) {
     console.log('query() ' + q)
@@ -50,4 +87,4 @@ async function main (queryStr) {
 //main('SELECT * FROM user where user = \'123\'')
 //main('SELECT * FROM Book LIMIT 10')
 
-//module.exports = { main };
+module.exports = { tamir1, main };

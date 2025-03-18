@@ -1,9 +1,10 @@
 //go to src folder and run the following command to start the server
-//node --watch-path=. Server.js 
+//node --watch-path=./src src/Server.js 
 
 const express = require("express");
 const cors = require("cors");
 const { main } = require("./Database");
+const { tamir1 } = require("./Database");
 
 
 const app = express();
@@ -18,10 +19,12 @@ app.get("/", (req, res) => {
 app.get("/tamir1/", async (req, res) => {
     try {
         console.log('Tamir 1 running...')
-        const queryStr = "SELECT * FROM Book LIMIT 10";
-        const result = await main(queryStr);
-        res.json(result);
+        res.send("Executing 1nd API!");
+        await tamir1();
+        //const result = await main(queryStr);
+        //res.json(result);
     }   catch (error) {
+        console.log('Tamir 1 failed...')
         res.status(500).send("Error executing 1st API!");
     }
   });
