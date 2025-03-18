@@ -3,7 +3,7 @@ const pg = require('pg')
 // create a config to configure both pooling behavior and client options
 var config = {
     user: 'postgres', // env var: PGUSER
-    database: 'db03', // env var: PGDATABASE
+    database: 'dbfinal', // env var: PGDATABASE
     password: 'Database0305!', // env var: PGPASSWORD
     host: 'localhost', // Server hosting the postgres database
     port: 5432, // env var: PGPORT
@@ -35,13 +35,13 @@ async function runQuery(query) {
 
 async function tamir1() {
     console.log('Database.tamir1()');
-    const query = 'SELECT * FROM Book LIMIT 10';
+    const query = 'SELECT * FROM product';
     return runQuery(query);
 }
 
 async function tamir2() {
     console.log('Database.tamir2()');
-    const query = 'SELECT * FROM Book LIMIT 20';
+    const query = 'SELECT * FROM users';
     return runQuery(query);
 }
 

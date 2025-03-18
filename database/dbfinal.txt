@@ -1,0 +1,259 @@
+-- postgres=# \i 'C:/nirmic/College - UW/Tamir/CSS 475/DB Project/DatabasesFinalProject/database/dbfinal.txt'
+
+\encoding utf8
+
+-- Connect to the default 'postgres' database
+\c postgres
+
+-- Drop the database if it exists (optional, but useful for resets)
+DROP DATABASE IF EXISTS dbfinal;
+
+-- Create the database
+CREATE DATABASE dbfinal;
+
+-- Connect to the new database
+\c dbfinal
+
+\encoding utf8
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', 'public', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+-- Create the roles table for user roles
+CREATE TABLE public.Role (
+    RoleKey VARCHAR(50) PRIMARY KEY,
+    RoleName VARCHAR(100) NOT NULL
+);
+ALTER TABLE public.Role OWNER TO postgres;
+
+-- Create the Products table
+CREATE TABLE public.Product (
+    ProductSKU VARCHAR(50) PRIMARY KEY,
+    ProductName VARCHAR(255) NOT NULL,
+    ProductDescription TEXT,
+    Price DECIMAL(10,2) NOT NULL,
+    RestockLevel INT,
+    Category VARCHAR(100),
+    InventoryLevel INT NOT NULL
+);
+ALTER TABLE public.Product OWNER TO postgres;
+
+-- Create the Sales Order table
+CREATE TABLE public.SalesOrder (
+    OrderNumber VARCHAR(50) PRIMARY KEY,
+    OrderDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PlatformKey VARCHAR(255),
+    CustomerEmail VARCHAR(100),
+    TotalAmount DECIMAL(10,2)
+);
+ALTER TABLE public.SalesOrder OWNER TO postgres;
+
+-- Create the SaleItem table for recording sales items
+CREATE TABLE public.SaleItem (
+    SaleItemID VARCHAR(50) PRIMARY KEY,
+    OrderNumber VARCHAR(50) REFERENCES public.SalesOrder(OrderNumber),
+    ProductSKU VARCHAR(50) REFERENCES public.Product(ProductSKU),
+    UnitsSold INT,
+    SalePrice DECIMAL(10,2),
+    DiscountApplied DECIMAL(5,2),
+    SaleDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+ALTER TABLE public.SaleItem OWNER TO postgres;
+
+-- Create the Inventory History table to track inventory changes
+CREATE TABLE public.InventoryHistory (
+    InventoryChangeID SERIAL PRIMARY KEY,
+    ProductSKU VARCHAR(50) REFERENCES public.Product(ProductSKU),
+    ChangeType VARCHAR(50) CHECK (ChangeType IN ('increase', 'decrease', 'adjustment')),
+    QuantityChanged INT,
+    ChangeDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UserEmail VARCHAR(100),
+    Description TEXT
+);
+ALTER TABLE public.InventoryHistory OWNER TO postgres;
+
+-- Create the Return table for managing customer returns
+CREATE TABLE public.Return (
+    ReturnID SERIAL PRIMARY KEY,
+    SaleItemID VARCHAR(50) REFERENCES public.SaleItem(SaleItemID),
+    ReturnDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Reason TEXT,
+    RefundAmount DECIMAL(10,2),
+    RestockQuantity INT,
+    UpdatedInventoryLevel INT
+);
+ALTER TABLE public.Return OWNER TO postgres;
+
+-- Create the Promotion table for managing product promotions
+CREATE TABLE public.Promotion (
+    PromotionID SERIAL PRIMARY KEY,
+    ProductSKU VARCHAR(50) REFERENCES public.Product(ProductSKU),
+    DiscountPercentage DECIMAL(5,2),
+    StartDate DATE,
+    EndDate DATE,
+    Conditions JSONB -- For storing additional promotion conditions as JSON
+);
+ALTER TABLE public.Promotion OWNER TO postgres;
+
+-- Create the Users table for system users
+CREATE TABLE public.Users (
+    Username VARCHAR(50) PRIMARY KEY,
+    Password VARCHAR(255) NOT NULL,
+    RoleKey VARCHAR(50) REFERENCES public.Role(RoleKey),
+    UserEmail VARCHAR(100) UNIQUE NOT NULL
+);
+ALTER TABLE public.Users OWNER TO postgres;
+
+-- Create the UserPermissions table for managing user permissions
+CREATE TABLE public.UserPermissions (
+    UserEmail VARCHAR(100) REFERENCES public.Users(UserEmail),
+    Permission VARCHAR(50) NOT NULL,
+    PRIMARY KEY (UserEmail, Permission)
+);
+ALTER TABLE public.UserPermissions OWNER TO postgres;
+
+-- Create the AuditLogs table for logging user actions
+CREATE TABLE public.AuditLog (
+    LogID SERIAL PRIMARY KEY,
+    UserEmail VARCHAR(100) REFERENCES public.Users(UserEmail),
+    ActionType VARCHAR(50) CHECK (ActionType IN ('INSERT', 'UPDATE', 'DELETE')),
+    TableName VARCHAR(100),
+    RecordKey VARCHAR(255),
+    Description TEXT,
+    IPAddress VARCHAR(50),
+    UserAgent VARCHAR(255),
+    ActionDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+ALTER TABLE public.AuditLog OWNER TO postgres;
+
+-- Create the Sales Report table to store report data (this can be used for different report types)
+CREATE TABLE public.SalesReport (
+    ReportID SERIAL PRIMARY KEY,
+    ReportType VARCHAR(50) CHECK (ReportType IN ('sales', 'inventory', 'returns')),
+    StartDate DATE,
+    EndDate DATE,
+    ReportData JSONB
+);
+ALTER TABLE public.SalesReport OWNER TO postgres;
+
+-- Create the SyncInventory table for syncing external platform data
+CREATE TABLE public.SyncInventory (
+    SyncID SERIAL PRIMARY KEY,
+    ProductSKU VARCHAR(50) REFERENCES public.Product(ProductSKU),
+    PlatformKey VARCHAR(255),
+    InventoryLevel INT,
+    SyncDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+ALTER TABLE public.SyncInventory OWNER TO postgres;
+
+-- Create a table to store details for promotional discounts on sales
+CREATE TABLE public.SalePromotion (
+    SaleItemID VARCHAR(50) REFERENCES public.SaleItem(SaleItemID),
+    PromotionID SERIAL REFERENCES public.Promotion(PromotionID),
+    DiscountApplied DECIMAL(5,2),
+    PRIMARY KEY (SaleItemID, PromotionID)
+);
+ALTER TABLE public.SalePromotion OWNER TO postgres;
+
+
+
+-- insert dummy data into the db
+-- Insert Roles
+INSERT INTO Role (RoleKey, RoleName) VALUES
+    ('admin', 'Administrator'),
+    ('manager', 'Manager'),
+    ('employee', 'Employee');
+
+-- Insert Users
+INSERT INTO Users (Username, Password, RoleKey, UserEmail) VALUES
+    ('admin1', 'hashed_password1', 'admin', 'admin@example.com'),
+    ('manager1', 'hashed_password2', 'manager', 'manager@example.com'),
+    ('employee1', 'hashed_password3', 'employee', 'employee@example.com'),
+    ('employee2', 'hashed_password4', 'employee', 'employee2@example.com');
+
+-- Insert Products
+INSERT INTO Product (ProductSKU, ProductName, ProductDescription, Price, RestockLevel, Category, InventoryLevel) VALUES
+    ('SKU001', 'Laptop', 'Gaming Laptop', 1200.99, 5, 'Electronics', 10),
+    ('SKU002', 'Smartphone', 'Latest model', 799.49, 10, 'Electronics', 25),
+    ('SKU003', 'Desk Chair', 'Ergonomic office chair', 149.99, 8, 'Furniture', 15),
+    ('SKU004', 'Monitor', '4K UHD Monitor', 299.99, 6, 'Electronics', 20),
+    ('SKU005', 'Keyboard', 'Mechanical Keyboard', 99.99, 12, 'Accessories', 30);
+
+-- Insert Sales Orders
+INSERT INTO SalesOrder (OrderNumber, OrderDate, PlatformKey, CustomerEmail, TotalAmount) VALUES
+    ('ORD001', NOW(), 'Amazon', 'customer1@example.com', 1200.99),
+    ('ORD002', NOW(), 'eBay', 'customer2@example.com', 799.49),
+    ('ORD003', NOW(), 'Amazon', 'customer3@example.com', 149.99),
+    ('ORD004', NOW(), 'BestBuy', 'customer4@example.com', 299.99),
+    ('ORD005', NOW(), 'Walmart', 'customer5@example.com', 99.99);
+
+-- Insert Sale Items
+INSERT INTO SaleItem (SaleItemID, OrderNumber, ProductSKU, UnitsSold, SalePrice, DiscountApplied, SaleDate) VALUES
+    ('SI001', 'ORD001', 'SKU001', 1, 1200.99, 0.00, NOW()),
+    ('SI002', 'ORD002', 'SKU002', 1, 799.49, 0.00, NOW()),
+    ('SI003', 'ORD003', 'SKU003', 1, 149.99, 5.00, NOW()),
+    ('SI004', 'ORD004', 'SKU004', 2, 299.99, 10.00, NOW()),
+    ('SI005', 'ORD005', 'SKU005', 3, 99.99, 2.00, NOW());
+
+-- Insert Inventory History
+INSERT INTO InventoryHistory (ProductSKU, ChangeType, QuantityChanged, UserEmail, Description) VALUES
+    ('SKU001', 'decrease', 1, 'admin@example.com', 'Sold 1 unit'),
+    ('SKU002', 'decrease', 1, 'manager@example.com', 'Sold 1 unit'),
+    ('SKU003', 'increase', 2, 'employee@example.com', 'Restocked 2 units'),
+    ('SKU004', 'adjustment', 1, 'admin@example.com', 'Manual stock adjustment'),
+    ('SKU005', 'decrease', 3, 'manager@example.com', 'Bulk order sale');
+
+-- Insert Promotions
+INSERT INTO Promotion (ProductSKU, DiscountPercentage, StartDate, EndDate, Conditions) VALUES
+    ('SKU001', 10.00, '2025-03-01', '2025-03-10', '{"minPurchase": 1}'),
+    ('SKU002', 15.00, '2025-04-01', '2025-04-15', '{"minPurchase": 1}'),
+    ('SKU003', 5.00, '2025-05-01', '2025-05-10', '{"minPurchase": 2}'),
+    ('SKU004', 7.00, '2025-06-01', '2025-06-15', '{"minPurchase": 1}'),
+    ('SKU005', 12.00, '2025-07-01', '2025-07-20', '{"minPurchase": 3}');
+
+-- Insert Returns
+INSERT INTO Return (SaleItemID, ReturnDate, Reason, RefundAmount, RestockQuantity, UpdatedInventoryLevel) VALUES
+    ('SI001', NOW(), 'Defective product', 1200.99, 1, 11),
+    ('SI002', NOW(), 'Wrong item shipped', 799.49, 1, 26),
+    ('SI003', NOW(), 'Customer changed mind', 149.99, 1, 16);
+
+-- Insert User Permissions
+INSERT INTO UserPermissions (UserEmail, Permission) VALUES
+    ('admin@example.com', 'FULL_ACCESS'),
+    ('manager@example.com', 'MANAGE_INVENTORY'),
+    ('employee@example.com', 'VIEW_REPORTS'),
+    ('employee2@example.com', 'EDIT_ORDERS');
+
+-- Insert Audit Logs
+INSERT INTO AuditLog (UserEmail, ActionType, TableName, RecordKey, Description, IPAddress, UserAgent) VALUES
+    ('admin@example.com', 'INSERT', 'Product', 'SKU001', 'Added new product', '192.168.1.1', 'Mozilla/5.0'),
+    ('manager@example.com', 'UPDATE', 'InventoryHistory', 'IH001', 'Adjusted stock levels', '192.168.1.2', 'Chrome/90.0');
+
+-- Insert Sales Report
+INSERT INTO SalesReport (ReportType, StartDate, EndDate, ReportData) VALUES
+    ('sales', '2025-03-01', '2025-03-10', '{"totalSales": 5, "revenue": 5000}');
+
+-- Insert Sync Inventory
+INSERT INTO SyncInventory (ProductSKU, PlatformKey, InventoryLevel, SyncDate) VALUES
+    ('SKU001', 'Amazon', 9, NOW()),
+    ('SKU002', 'eBay', 24, NOW()),
+    ('SKU003', 'BestBuy', 14, NOW()),
+    ('SKU004', 'Walmart', 19, NOW()),
+    ('SKU005', 'Newegg', 29, NOW());
+
+
+
+\c postgres
+\c dbfinal
