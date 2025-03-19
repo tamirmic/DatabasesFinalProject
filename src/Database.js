@@ -1,15 +1,16 @@
+require('dotenv').config();
 const pg = require('pg')
 
-// create a config to configure both pooling behavior and client options
+// configuration for connection string, using an env file to store the following variables
 var config = {
-    user: 'postgres', // env var: PGUSER
-    database: 'dbfinal', // env var: PGDATABASE
-    password: 'Database0305!', // env var: PGPASSWORD
-    host: 'localhost', // Server hosting the postgres database
-    port: 5432, // env var: PGPORT
-    max: 10, // max number of clients in the pool
-    idleTimeoutMillis: 30000 // how long a client is allowed to remain idle before being closed
-}
+    user: process.env.PGUSER,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
+    host: process.env.PGHOST,
+    port: process.env.PGPORT,
+    max: process.env.PGMAX || 10,
+    idleTimeoutMillis: process.env.PGIDLETIMEOUT || 30000
+};
 
 // Create the pool and connect to the database
 const pool = new pg.Pool(config);
