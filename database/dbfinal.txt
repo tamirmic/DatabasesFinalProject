@@ -1,5 +1,3 @@
--- postgres=# \i 'C:/nirmic/College - UW/Tamir/CSS 475/DB Project/DatabasesFinalProject/database/dbfinal.txt'
-
 \encoding utf8
 
 -- Connect to the default 'postgres' database
