@@ -21,7 +21,13 @@ function App() {
   };
 
   const retrieveTotalSalesForEachProduct = () => {
-    fetch("http://localhost:3000/retrieveTotalSalesForEachProduct/")
+
+    if (category.trim() === "") {
+      setMessage("Please enter a category!");
+      return;
+    }
+
+    fetch(`http://localhost:3000/retrieveTotalSalesForEachProduct?category=${category}`)
     .then((response) => response.json())
     .then((data) => setMessage(JSON.stringify(data, null, 2)))
     .catch((error) => console.error("Error fetching message:", error));
@@ -37,14 +43,14 @@ function App() {
       </header>
 
       <div className="card">
+        <label>Enter a category</label>
+        <input type="text" placeholder="Enter category" value={category} onChange={(e) => setCategory(e.target.value)}/>
         <div className="button-group">
-          <label>Enter a category to retrieve all products: (List API)</label>
-          <input type="text" placeholder="Enter category" value={category} onChange={(e) => setCategory(e.target.value)}/>
+          <label>Retrieve all products from category: (List API)</label>
           <button className="task-button" onClick={retrieveProductsByCategory}>Execute</button>
         </div>
         <div className="button-group">
-          <label>Enter a category to retrieve total sales for each product: (Complex Query API)</label>
-          <input type="text" placeholder="Enter category" value={category} onChange={(e) => setCategory(e.target.value)}/>
+          <label>Retrieve total sales for each product from category: (Complex Query API)</label>
           <button className="task-button" onClick={retrieveTotalSalesForEachProduct}>Execute</button>
         </div>
       </div>

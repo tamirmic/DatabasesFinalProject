@@ -72,7 +72,7 @@ async function retrieveTotalSalesForEachProduct(category) {
             FROM SaleItem SI 
             WHERE SI.ProductSKU = P.ProductSKU) AS LastSaleDate
         FROM Product P
-        WHERE P.Category = '${category}'
+        WHERE P.Category ILIKE '${category}'
         ORDER BY P.ProductName
     `;
 

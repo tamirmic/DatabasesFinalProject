@@ -37,8 +37,9 @@ app.get("/retrieveProductsByCategory/", async (req, res) => {
 
 app.get("/retrieveTotalSalesForEachProduct/", async (req, res) => {
     try {
+        const category = req.query.category;
         console.log('Server.retrieveTotalSalesForEachProduct() -> running...')
-        const rows = await retrieveTotalSalesForEachProduct('Electronics');
+        const rows = await retrieveTotalSalesForEachProduct(category);
         // Send the rows as JSON response to the client
         res.json({ message: "Server.retrieveTotalSalesForEachProduct() -> executing API!", data: rows });
     }   catch (error) {
