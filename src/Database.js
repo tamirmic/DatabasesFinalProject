@@ -41,12 +41,15 @@ async function runQuery(query) {
 async function retrieveProductsByCategory(category) {
     console.log('Database.retrieveProductsByCategory() -> Fetching: ${category}');
 
-    const query = `
-        SELECT ProductSKU, ProductName, Price, InventoryLevel
-        FROM Product
-        WHERE Category ILIKE '${category}'
-        ORDER BY ProductName;
-    `;
+    const query = {
+        text: `
+            SELECT ProductSKU, ProductName, Price, InventoryLevel
+            FROM Product
+            WHERE Category ILIKE $1
+            ORDER BY ProductName;
+        `,
+        values: [category]
+    };
 
     return runQuery(query);
 }
@@ -57,24 +60,27 @@ async function retrieveProductsByCategory(category) {
 async function retrieveTotalSalesForEachProduct(category) {
     console.log('Database.retrieveTotalSalesForEachProduct() -> Fetching: ${category}');
     
-    const query = `
+    const query = {
+        text:`
         SELECT 
             P.ProductSKU, 
             P.ProductName, 
             P.Price, 
             P.InventoryLevel,
-            -- Sub-select to get total units sold from SaleItem
-            (SELECT COALESCE(SUM(SI.UnitsSold), 0) 
-            FROM SaleItem SI 
-            WHERE SI.ProductSKU = P.ProductSKU) AS TotalUnitsSold,
-            -- Sub-select to get the latest sale date
-            (SELECT MAX(SI.SaleDate) 
-            FROM SaleItem SI 
-            WHERE SI.ProductSKU = P.ProductSKU) AS LastSaleDate
+        -- Sub-select to get total units sold from SaleItem
+        (SELECT COALESCE(SUM(SI.UnitsSold), 0) 
+        FROM SaleItem SI 
+        WHERE SI.ProductSKU = P.ProductSKU) AS TotalUnitsSold,
+        -- Sub-select to get the latest sale date
+        (SELECT MAX(SI.SaleDate) 
+        FROM SaleItem SI 
+        WHERE SI.ProductSKU = P.ProductSKU) AS LastSaleDate
         FROM Product P
-        WHERE P.Category ILIKE '${category}'
+        WHERE P.Category ILIKE $1
         ORDER BY P.ProductName
-    `;
+        `,
+        values: [category]
+    };
 
     return runQuery(query);
 }

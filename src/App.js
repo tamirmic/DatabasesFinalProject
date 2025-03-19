@@ -50,7 +50,7 @@ function App() {
           <button className="task-button" onClick={retrieveProductsByCategory}>Execute</button>
         </div>
         <div className="button-group">
-          <label>Retrieve total sales for each product from category: (Complex Query API)</label>
+          <label>Retrieve the latest sale date and total number of sales for each product from category: (Complex Query API)</label>
           <button className="task-button" onClick={retrieveTotalSalesForEachProduct}>Execute</button>
         </div>
       </div>
