@@ -72,7 +72,7 @@ async function retrieveTotalSalesForEachProduct(category) {
         FROM SaleItem SI 
         WHERE SI.ProductSKU = P.ProductSKU) AS TotalUnitsSold,
         -- Sub-select to get the latest sale date
-        (SELECT MAX(SI.SaleDate) 
+        (SELECT TO_CHAR(MAX(SI.SaleDate), 'YYYY-MM-DD')
         FROM SaleItem SI 
         WHERE SI.ProductSKU = P.ProductSKU) AS LastSaleDate
         FROM Product P
