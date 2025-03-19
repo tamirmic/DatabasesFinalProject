@@ -33,27 +33,47 @@ async function runQuery(query) {
     }
 }
 
+//List API
+//Retrieve all products depending on the category
 async function retrieveProductsByCategory(category) {
-    console.log(`Database.retrieveProductsByCategory() -> Fetching products in category: ${category}`);
+    console.log('Database.retrieveProductsByCategory() -> Fetching: ${category}');
 
     const query = `
         SELECT ProductSKU, ProductName, Price, InventoryLevel
         FROM Product
         WHERE Category = '${category}'
-        ORDER BY ProductName
-        LIMIT 10 OFFSET 0;
+        ORDER BY ProductName;
     `;
 
     return runQuery(query);
 }
 
+//Complex Query API
+//The total number of sales for each product from the SaleItem table.
+//The latest sale date for each product.
+async function retrieveTotalSalesForEachProduct(category) {
+    console.log('Database.retrieveTotalSalesForEachProduct() -> Fetching: ${category}');
+    
+    const query = `
+        SELECT 
+            P.ProductSKU, 
+            P.ProductName, 
+            P.Price, 
+            P.InventoryLevel,
+            -- Sub-select to get total units sold from SaleItem
+            (SELECT COALESCE(SUM(SI.UnitsSold), 0) 
+            FROM SaleItem SI 
+            WHERE SI.ProductSKU = P.ProductSKU) AS TotalUnitsSold,
+            -- Sub-select to get the latest sale date
+            (SELECT MAX(SI.SaleDate) 
+            FROM SaleItem SI 
+            WHERE SI.ProductSKU = P.ProductSKU) AS LastSaleDate
+        FROM Product P
+        WHERE P.Category = '${category}'
+        ORDER BY P.ProductName
+    `;
 
-async function tamir2() {
-    console.log('Database.tamir2()');
-    const query = 'SELECT * FROM users';
     return runQuery(query);
 }
 
-
-
-module.exports = { retrieveProductsByCategory, tamir2 };
+module.exports = { retrieveProductsByCategory, retrieveTotalSalesForEachProduct };

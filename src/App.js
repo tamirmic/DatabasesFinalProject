@@ -8,17 +8,17 @@ function App() {
 
   const retrieveProductsByCategory = () => {
     fetch("http://localhost:3000/retrieveProductsByCategory/")
-      .then((response) => response.json())  // Use .json() instead of .text() to parse the JSON response
-      .then((data) => setMessage(JSON.stringify(data, null, 2)))  // Log data in a readable format
+      .then((response) => response.json())
+      .then((data) => setMessage(JSON.stringify(data, null, 2)))
       .catch((error) => console.error("Error fetching message:", error));
   };
 
-  const tamir2 = () => {
-    fetch("http://localhost:3000/tamir2/")
-      .then((response) => response.text())
-      .then((data) => setMessage(data))
-      .catch((error) => console.error("Error fetching message:", error));
-  };
+  const retrieveTotalSalesForEachProduct = () => {
+    fetch("http://localhost:3000/retrieveTotalSalesForEachProduct/")
+    .then((response) => response.json())
+    .then((data) => setMessage(JSON.stringify(data, null, 2)))
+    .catch((error) => console.error("Error fetching message:", error));
+};
 
 
 
@@ -35,7 +35,7 @@ function App() {
       <div className="card">
         <div className="button-group">
           <button className="task-button" onClick={retrieveProductsByCategory}>Retrieve Products By Category: (List API)</button>
-          <button className="task-button" onClick={tamir2}>Tamir2: Complex Query (60 points)</button>
+          <button className="task-button" onClick={retrieveTotalSalesForEachProduct}>Retrieve TotalSales For Each Product: (Complex Query API)</button>
         </div>
       </div>
 
