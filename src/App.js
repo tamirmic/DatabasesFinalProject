@@ -65,8 +65,8 @@ function App() {
       </header>
 
       <div className="card">
-        <label>Enter a category</label>
-        <input type="text" placeholder="Enter category" value={category} onChange={(e) => setCategory(e.target.value)} />
+        <label>Enter a product category</label>
+        <input type="text" placeholder="Enter category" value={category} onChange={(e) => setCategory(e.target.value)}/>
         <div className="button-group">
           <label>Retrieve all products from category: (List API)</label>
           <button className="task-button" onClick={retrieveProductsByCategory}>Execute</button>
