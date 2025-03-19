@@ -4,11 +4,18 @@ import { useState } from "react";
 import "./App.css";
 
 function App() {
+  const [category, setCategory] = useState("");
   const [message, setMessage] = useState("");
 
   const retrieveProductsByCategory = () => {
-    fetch("http://localhost:3000/retrieveProductsByCategory/")
-      .then((response) => response.json())
+
+    if (category.trim() === "") {
+      setMessage("Please enter a category!");
+      return;
+    }
+
+    fetch(`http://localhost:3000/retrieveProductsByCategory?category=${category}`)
+    .then((response) => response.json())
       .then((data) => setMessage(JSON.stringify(data, null, 2)))
       .catch((error) => console.error("Error fetching message:", error));
   };
@@ -21,9 +28,6 @@ function App() {
 };
 
 
-
-  
-
   return (
     <div className="container">
       <header>
@@ -34,8 +38,14 @@ function App() {
 
       <div className="card">
         <div className="button-group">
-          <button className="task-button" onClick={retrieveProductsByCategory}>Retrieve Products By Category: (List API)</button>
-          <button className="task-button" onClick={retrieveTotalSalesForEachProduct}>Retrieve TotalSales For Each Product: (Complex Query API)</button>
+          <label>Enter a category to retrieve all products: (List API)</label>
+          <input type="text" placeholder="Enter category" value={category} onChange={(e) => setCategory(e.target.value)}/>
+          <button className="task-button" onClick={retrieveProductsByCategory}>Execute</button>
+        </div>
+        <div className="button-group">
+          <label>Enter a category to retrieve total sales for each product: (Complex Query API)</label>
+          <input type="text" placeholder="Enter category" value={category} onChange={(e) => setCategory(e.target.value)}/>
+          <button className="task-button" onClick={retrieveTotalSalesForEachProduct}>Execute</button>
         </div>
       </div>
 

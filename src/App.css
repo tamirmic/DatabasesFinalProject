@@ -7,6 +7,7 @@
   background: #f9f9f9;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  height: 650px;
 }
 
 /* Style the header */
@@ -27,6 +28,7 @@ header h2, header h3 {
   flex-direction: column;
   gap: 10px;
   margin-top: 20px;
+  align-items: center;
 }
 
 /* Style buttons */
@@ -43,4 +45,50 @@ header h2, header h3 {
 
 .task-button:hover {
   background: #0056b3;
+}
+
+input {
+  width: 250px; /* Set a reasonable width */
+  padding: 10px; /* Add padding for better spacing */
+  font-size: 16px; /* Increase font size */
+  border: 2px solid #ccc; /* Light gray border */
+  border-radius: 8px; /* Rounded corners */
+  outline: none; /* Remove default focus outline */
+  transition: border-color 0.3s ease-in-out; /* Smooth transition on focus */
+}
+
+input:focus {
+  border-color: #007bff; /* Change border color on focus */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a subtle glow */
+}
+
+.button-group {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Add spacing between elements */
+}
+
+.task-button {
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #007bff; /* Blue background */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.task-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Style the label */
+label {
+  font-size: 1.2rem; /* Increase readability */
+  font-weight: bold; /* Make it stand out */
+  color: #444; /* Slightly softer than black */
+  margin-bottom: 5px; /* Add space below */
+  display: block; /* Ensures it appears above input */
+  text-align: center; /* Align text properly */
 }

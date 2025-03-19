@@ -1,4 +1,6 @@
+// use for connection string
 require('dotenv').config();
+// use for postgres database connection
 const pg = require('pg')
 
 // configuration for connection string, using an env file to store the following variables
@@ -42,7 +44,7 @@ async function retrieveProductsByCategory(category) {
     const query = `
         SELECT ProductSKU, ProductName, Price, InventoryLevel
         FROM Product
-        WHERE Category = '${category}'
+        WHERE Category ILIKE '${category}'
         ORDER BY ProductName;
     `;
 

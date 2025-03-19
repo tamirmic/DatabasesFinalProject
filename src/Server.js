@@ -22,8 +22,9 @@ app.get("/", (req, res) => {
 
 app.get("/retrieveProductsByCategory/", async (req, res) => {
     try {
+        const category = req.query.category;
         console.log('Server.retrieveProductsByCategory() -> running...')
-        const rows = await retrieveProductsByCategory('Electronics');
+        const rows = await retrieveProductsByCategory(category);
         // Send the rows as JSON response to the client
         res.json({ message: "Server.retrieveProductsByCategory() -> executing API!", data: rows });
     }   catch (error) {
